@@ -1,0 +1,22 @@
+"""
+config.py.example
+Template configuration file for API keys and other sensitive data.
+Copy this file to config.py and update with your actual credentials.
+"""
+
+# StockTwits API Configuration
+STOCKTWITS_USER_ID = "your-user-id"
+STOCKTWITS_USERNAME = "your-username"
+STOCKTWITS_ACCESS_TOKEN = "your-access-token"
+
+# Web Scraper Configuration
+WEBSCRAPER_USERNAME = "your-stocktwits-username"
+WEBSCRAPER_PASSWORD = "your-stocktwits-password"
+
+# Database Configuration (alternative to databaseconfig.py)
+DATABASE_CONFIG = {
+    "host": "your-database-host",
+    "user": "your-username", 
+    "passwd": "your-password",
+    "db": "your-database-name",
+} 

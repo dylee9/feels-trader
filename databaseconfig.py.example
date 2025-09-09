@@ -1,0 +1,12 @@
+"""
+databaseconfig.py.example
+Template configuration file for database connection.
+Copy this file to databaseconfig.py and update with your actual credentials.
+"""
+
+mysql = {
+    "host": "your-database-host",
+    "user": "your-username",
+    "passwd": "your-password",
+    "db": "your-database-name",
+} 

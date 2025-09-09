@@ -10,46 +10,48 @@ import databaseconfig as cfg
 class DbIO:
     def __init__(self):
         # Setup connection to DB
-        self.db = pymysql.connect(host=cfg.mysql["host"], user=cfg.mysql["user"], password=cfg.mysql["passwd"], db=cfg.mysql["db"])
+        try:
+            self.db = pymysql.connect(host=cfg.mysql["host"], user=cfg.mysql["user"], password=cfg.mysql["passwd"], db=cfg.mysql["db"])
+        except ImportError:
+            raise ValueError("Database configuration not found. Please create databaseconfig.py from databaseconfig.py.example")
 
         # Establish DB cursor used for write/read activities
         self.cursor = self.db.cursor()
 
         # ID needs to be removed. This is a temp measure to have unique private keys.
-        self.id = 0;
-        print('dbio object created');
+        self.id = 0
+        print('dbio object created')
 
     def write_datapoint_record(self, ticker, sentiment, text):
-        # fix the use of id here. I want this to be taken care of by the DB itself.
-        # Prepare sql query to insert a new data point.
-        sql = "INSERT INTO datapoint(ID, TICKER, DATE, SENTIMENT, TEXT) " \
-              "VALUES ('%d', '%s', '%s', '%d', '%s' )" % \
-              (self.id, ticker, time.strftime('%Y-%m-%d %H:%M:%S'), sentiment, text)
+        # Use parameterized query to prevent SQL injection
+        sql = "INSERT INTO datapoint(ID, TICKER, DATE, SENTIMENT, TEXT) VALUES (%s, %s, %s, %s, %s)"
         try:
-
-            self.cursor.execute(sql)
+            self.cursor.execute(sql, (self.id, ticker, time.strftime('%Y-%m-%d %H:%M:%S'), sentiment, text))
             self.db.commit()
             self.id += 1
-        except:
+        except Exception as e:
             self.db.rollback()
-            print("Error: db rolled back")
+            print(f"Error: db rolled back - {e}")
 
     def read_datapoint_record(self, id):
-        sql = "SELECT * FROM datapoint WHERE id = '%d'" % (id)
-
+        # Use parameterized query to prevent SQL injection
+        sql = "SELECT * FROM datapoint WHERE id = %s"
+        
         try:
-            self.cursor.execute(sql)
+            self.cursor.execute(sql, (id,))
             results = self.cursor.fetchall()
             for row in results:
-                id = row[0]
+                record_id = row[0]
                 ticker = row[1]
                 date = row[2]
                 sentiment = row[3]
                 text = row[4]
-                #print("id: %d, ticker: %s, date: %s, sentiment: %d, text: %s" %
-                #     (id, ticker, date, sentiment, text))
-        except:
-            print("Error: unable to fetch data")
+                # Uncomment to print results
+                # print(f"id: {record_id}, ticker: {ticker}, date: {date}, sentiment: {sentiment}, text: {text}")
+            return results
+        except Exception as e:
+            print(f"Error: unable to fetch data - {e}")
+            return None
 
     def __del__(self):
         self.db.close()

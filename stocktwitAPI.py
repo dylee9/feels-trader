@@ -5,12 +5,24 @@ stocktwitAPI.py
 import requests
 import json
 import datetime
+import os
 
-# static variables
-USER_ID = "4421399"
-USERNAME = "runningmanruns"
+# Load configuration from environment variables or config file
+try:
+    from config import STOCKTWITS_USER_ID, STOCKTWITS_USERNAME, STOCKTWITS_ACCESS_TOKEN
+    USER_ID = STOCKTWITS_USER_ID
+    USERNAME = STOCKTWITS_USERNAME
+    ACCESS_TOKEN = STOCKTWITS_ACCESS_TOKEN
+except ImportError:
+    # Fall back to environment variables
+    USER_ID = os.getenv("STOCKTWITS_USER_ID", "")
+    USERNAME = os.getenv("STOCKTWITS_USERNAME", "")
+    ACCESS_TOKEN = os.getenv("STOCKTWITS_ACCESS_TOKEN", "")
+    
+    if not all([USER_ID, USERNAME, ACCESS_TOKEN]):
+        raise ValueError("StockTwits API credentials not found. Please create config.py from config.py.example or set environment variables.")
+
 SCOPE = "read"
-ACCESS_TOKEN = "__REMOVED__"
 SAVEPATH = "data/test_data_%s.json" % str(datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
 
 # access stocktwits API via trending data request

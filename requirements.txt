@@ -1,2 +1,11 @@
+keras==2.4.3
+tensorflow==2.4.0
+h5py==2.10.0
+nltk==3.5
+requests==2.25.1
+regex==2020.11.13
+pandas==1.2.0
+PyMySQL==0.10.1
 selenium==3.141.0
 keyboard==0.13.5
+cryptography

@@ -11,8 +11,19 @@ if __name__ == "__main__":
 
 	DRIVER_PATH = "drivers/chromedriver"
 	TARGET_URL = "https://stocktwits.com"
-	USERNAME = "runningmanruns"
-	PASSWORD = "*******************"
+	
+	# Load credentials from environment variables or config file
+	try:
+		from config import WEBSCRAPER_USERNAME, WEBSCRAPER_PASSWORD
+		USERNAME = WEBSCRAPER_USERNAME
+		PASSWORD = WEBSCRAPER_PASSWORD
+	except ImportError:
+		import os
+		USERNAME = os.getenv("WEBSCRAPER_USERNAME", "")
+		PASSWORD = os.getenv("WEBSCRAPER_PASSWORD", "")
+		
+		if not all([USERNAME, PASSWORD]):
+			raise ValueError("Web scraper credentials not found. Please create config.py from config.py.example or set environment variables.")
 
 	# set option parameters
 	# options = Options()
